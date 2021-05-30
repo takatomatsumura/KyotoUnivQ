@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser, TagModel, QuestionModel, AnswerModel, MessageModel
+from .models import CustomUser, TagModel, QuestionModel, AnswerModel, MessageModel, GoodModel, Profile
 from django.contrib.auth.models import User
 from django.contrib.auth import forms as auth_forms
 from django.forms import ModelForm
@@ -28,8 +28,10 @@ class BestAnswerSelectForm(forms.Form):
 	#選択ボタンの設置
 	select = forms.ChoiceField(label='選択', widget=forms.RadioSelect, choices = ['0', '選択'])
 
-class GoodForm(forms.Form):
-	#
+class ProfileForm(forms.ModelForm):
+	class Meta:
+		model = Profile
+		fields = ['belong']
 
 class AnswerForm(forms.ModelForm):
 	class Meta:
@@ -45,3 +47,27 @@ class QuestionForm(forms.ModelForm):
 	class Meta:
 		model = QuestionModel
 		fields = ['title', 'content', 'tag', 'image1', 'image2', 'image3']
+
+class GoodForm(forms.ModelForm):
+	class Meta:
+		model = GoodModel
+
+class UpdateImageForm(forms.ModelForm):
+	class Mera:
+		model = Profile
+		fields = ['image']
+
+class UpdateUsernameForm(forms.ModelForm):
+	class Meta:
+		model = Profile
+		fields = ['username']
+
+class UpdateIntroForm(forms.ModelForm):
+	class Meta:
+		model = Profile
+		fields = ['intro']
+
+class UpdateHideForm(forms.ModelForm):
+	class Meta:
+		model = Profile
+		fields = ['hide']
