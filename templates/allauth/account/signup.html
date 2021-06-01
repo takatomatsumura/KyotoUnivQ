@@ -1,4 +1,4 @@
-{% extends "Accounts/base.html" %}
+{% extends "allauth/base.html" %}
 
 {% load i18n %}
 
@@ -6,7 +6,7 @@
 
 {% block content %}
 <h1>{% trans "Sign Up" %}</h1>
-
+<p>こんにちは。HELLo!!</p>
 <p>{% blocktrans %}Already have an account? Then please give<a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
 
 <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
