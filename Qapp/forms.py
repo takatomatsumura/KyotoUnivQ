@@ -1,8 +1,9 @@
 from django import forms
-from .models import CustomUser, TagModel, QuestionModel, AnswerModel, MessageModel, GoodModel, Profile
+from .models import QuestionModel, AnswerModel, MessageModel, GoodModel, Profile
 from django.contrib.auth.models import User
 from django.contrib.auth import forms as auth_forms
 from django.forms import ModelForm
+from Accounts.models import CustomUser
 
 
 class FindFormByWords(forms.Form):
@@ -22,7 +23,7 @@ class ReportForm(forms.Form):
 		('1', '不適切な表現が含まれる。'),
 		('2', '質問と解答の不一致')
 		]
-	choice = forms.CHoiceField(required=True, choices=CHOICE)
+	choice = forms.ChoiceField(required=True, choices=CHOICE)
 
 class BestAnswerSelectForm(forms.Form):
 	#選択ボタンの設置
@@ -51,6 +52,7 @@ class QuestionForm(forms.ModelForm):
 class GoodForm(forms.ModelForm):
 	class Meta:
 		model = GoodModel
+		fields = []
 
 class UpdateImageForm(forms.ModelForm):
 	class Mera:
@@ -59,7 +61,7 @@ class UpdateImageForm(forms.ModelForm):
 
 class UpdateUsernameForm(forms.ModelForm):
 	class Meta:
-		model = Profile
+		model = CustomUser
 		fields = ['username']
 
 class UpdateIntroForm(forms.ModelForm):

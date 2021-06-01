@@ -54,7 +54,7 @@ class Profile(models.Model):
 	('農学部森林科学科', '農学部森林科学科'),
 	('農学部食品生物科学科', '農学部食品生物科学科'),
 	)
-	owner = models.OneToOneField(CustomUser, on_delet = models.CASCADE)
+	owner = models.OneToOneField(CustomUser, on_delete = models.CASCADE)
 	#いいね総数
 	good_points = models.IntegerField(default=0)
 	#所属学部、学科
@@ -66,7 +66,7 @@ class Profile(models.Model):
 	#ユーザー画像
 	image = models.ImageField(upload_to='', blank=True, null=True)
 	#総いいね数のオン・オフ - True : オン（表示） False : オフ（非表示）
-	hide = models.CharField(default="True", choices=(("True", "True"), ("False", "False")))
+	hide = models.CharField(max_length=10, default="True", choices=(("True", "True"), ("False", "False")))
 
 class QuestionModel(models.Model):
 	#質問タイトル
@@ -82,9 +82,9 @@ class QuestionModel(models.Model):
 	image2 = models.ImageField(upload_to = '', blank=True, null=True)
 	image3 = models.ImageField(upload_to = '', blank=True, null=True)
 	#タグ
-	tag = models.CharField(max_length=50, choices=CHOICE)
+	tag = models.CharField(max_length=50, blank=True, null=True, choices=CHOICE)
 	#状態 - False : 未解答, True : 解答済み
-	condition = models.CharField(default="True", choices=(("True", "True"), ("False", "False")))
+	condition = models.CharField(max_length=10,default="True", choices=(("True", "True"), ("False", "False")))
 
 	def __str__(self):
 		return self.title.__str__()
