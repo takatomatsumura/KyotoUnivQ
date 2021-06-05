@@ -1,0 +1,21 @@
+{% extends 'Qapp/base.html' %}
+
+{% load static %}
+
+{% block extra_style %}
+<link rel="stylesheet" type="text/css" href="{% static 'Qapp/css/next_signup.css' %}">
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="" >
+	{% csrf_token %}
+	{{ form }}
+	<button type="submit" onclick="'">確定</button>
+</form>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

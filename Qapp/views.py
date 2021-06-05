@@ -17,7 +17,8 @@ from .forms import (
     UpdateUsernameForm,
     UpdateIntroForm,
     UpdateImageForm,
-    UpdateHideForm
+    UpdateHideForm,
+    ProfileSignupForm
     )
 
 
@@ -389,7 +390,17 @@ def tag(request):
     return render(request, "tag.html", {"choices" : CHOICE})
 
 
+def next_signup(request):
 
+    if request.method == 'POST':
+        form = ProfileSignupForm(request.POST)
+        form.instance.owner = request.user
+        form.save()
+        return redirect(to = '/')
+    else:
+        form = ProfileSignupForm()
+
+    return render(request, "Qapp/next_signup.html", {"form" : form})
 
 
 
