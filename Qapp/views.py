@@ -145,10 +145,10 @@ def question(request, num):
                 ansform.save()
 
         elif "search" in request.POST:
-            form = FindFormByWords(request.POST)
+            findform = FindFormByWords(request.POST)
             message = "検索ワードを入力 : "
 
-            if form.is_valid:
+            if findform.is_valid:
                 search_words = request.POST['words']
                 redirect_url = reverse('Qapp:find')
                 parameters = urlencode(dict(choose = "all", searchwords = search_words))
@@ -289,34 +289,34 @@ def profile(request, pk):
 
         if request.method == 'POST':
             
-            #<button name = "image" value = "{{ answer.id }}" -> Button for changing user image
+            #<button name = "image" value = "value" -> Button for changing user image
             if "image" in request.POST:
                 imageform = UpdateImageForm(request.POST, request.FILES)
                 user_profile = Profile.objects.get(owner = request.user)
                 user_profile.image = iamgeform.cleaned_data["image"]
                 user_profile.save()
 
-            #<button name = "username" value = "{{ answer.id }}" -> Button for changing username
+            #<button name = "username" value = "value" -> Button for changing username
             if "username" in request.POST:
                 nameform = UpdateUsernameForm(request.POST)
                 user_obj = User.objects.get(username = request.user.username)
                 user_obj.username = nameform.cleaned_data["username"]
 
-            #<button name = "intro" value = "{{ answer.id }}" -> Button for changing introduction
+            #<button name = "intro" value = "value" -> Button for changing introduction
             if "intro" in request.POST:
                 introform = UpdateIntroForm(request.POST)
                 user_profile = Profile.objects.get(owner = request.user)
                 user_profile.intro = introform.cleaned_data["intro"]
                 user_profile.save()
 
-            #<button name = "hide" value = "{{ answer.id }}" -> Button for hiding all Goods the user got 
+            #<button name = "hide" value = "value" -> Button for hiding all Goods the user got 
             if "hide" in request.POST:
                 hideform = UpdateHideForm(request.POST)
                 user_profile = Profile.objects.get(owner = request.user)
                 user_profile.hide = introform.cleaned_data["hide"]
                 user_profile.save()
 
-            #<button name = "change" value = "{{ answer.id }}" -> Button for Selecting whether to show answers or questions
+            #<button name = "change" value = "value" -> Button for Selecting whether to show answers or questions
             if "change" in request.POST:
                 if now_selected :
                     now_selected = False
@@ -338,6 +338,7 @@ def profile(request, pk):
             "questions" : question_all,
             "ans_questions" : ans_question_all,
             "now_selected" : now_selected,
+            "requser" : request.user,
         }
 
         return render(request, "profile.html", params)
@@ -359,9 +360,33 @@ def setting(request):
     # logout, password_change -> Accounts App
     return render(request, "setting.html", {"user" : request.user})
 
-
-
-
+def tag(request):
+    CHOICE = (
+    ('総合人間学部', '総合人間学部'),
+    ('文学部', '文学部'),
+    ('教育学部', '教育学部'),
+    ('法学部', '法学部'),
+    ('経済学部', '経済学部'),
+    ('理学部', '理学部'),
+    ('医学部医学科', '医学部医学科'),
+    ('医学部人間健康学科', '医学部人間健康学科'),
+    ('薬学部', '薬学部'),
+    ('工学部地球工学科', '工学部地球工学科'),
+    ('工学部建築学科', '工学部建築学科'),
+    ('工学部物理工学科', '工学部物理工学科'),
+    ('工学部電気電子工学科', '工学部電気電子工学科'),
+    ('工学部情報学科', '工学部情報学科'),
+    ('工学部工業化学科', '工学部工業化学科'),
+    ('農学部資源生物科学科', '農学部資源生物科学科'),
+    ('農学部応用生命科学科', '農学部応用生命科学科'),
+    ('農学部地域環境工学科', '農学部地域環境工学科'),
+    ('農学部食料・環境経済学科', '農学部食料・環境経済学科'),
+    ('農学部森林科学科', '農学部森林科学科'),
+    ('農学部食品生物科学科', '農学部食品生物科学科'),
+    ('学校生活', '学校生活'),
+    ('全学共通科目', '全学共通科目'),
+    )
+    return render(request, "tag.html", {"choices" : CHOICE})
 
 
 

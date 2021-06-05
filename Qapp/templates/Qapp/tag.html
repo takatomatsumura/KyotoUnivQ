@@ -10,6 +10,11 @@
 {% endblock %}
 
 {% block content %}
+
+{% for choice in choices %}
+<a href="{% url 'search' 'all' '1' 'False' choice %}">
+{% endfor %}
+
 {% endblock %}
 
 {% block footer %}

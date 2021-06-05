@@ -10,6 +10,39 @@
 {% endblock %}
 
 {% block content %}
+
+<form method="POST" action="" >
+	{% csrf_token %}
+	{{ message }} : {{ findform }}
+	<button type="submit" name="search" value="value" onclick="'">検索</button>
+</form>
+
+{% for answer in answers %}
+
+{{ answer.ans_user.username }}
+{{ answer.ans_user.profile__image }}
+{{ answer.content }}
+
+<form method="POST" action="" >
+	<button type="submit" name="good" value="{{ answer.id }}">good</button>
+</form>
+
+<form method="POST" action="" >
+	<button type="submit" name="choice" value="{{ answer.id }}">choose</button>
+</form>
+
+<form method="POST" action="" >
+	{{ form }}
+	<button type="submit" name="submit" value="{{ answer.id }}">送信</button>
+</form>
+
+{% endfor %}
+
+<form method="POST" action="" >
+	{{ ansform }}
+	<button type="submit" name="answer" value="{{ answer.id }}">answer</button>
+</form>
+
 {% endblock %}
 
 {% block footer %}

@@ -10,6 +10,48 @@
 {% endblock %}
 
 {% block content %}
+
+{% if requser == user %}
+
+	{{ user.username }}
+	{{ user.profile__intro }}
+	{{ user.profile__image }}
+	{{ user.profile__good_points }}
+
+	<form action="" method="POST" >
+		{% csrf_token %}
+		{{ imageform }}
+		<button type="submit" name="good" value="value">画像を変更</button>
+	</form>
+
+	<form action="" method="POST" >
+		{% csrf_token %}
+		{{ nameform }}
+		<button type="submit" name="username" value="value">名前を変更</button>
+	</form>
+
+	<form action="" method="POST" >
+		{% csrf_token %}
+		{{ introform }}
+		<button type="submit" name="intro" value="value">自己紹介を変更</button>
+	</form>
+
+	<form action="" method="POST" >
+		<button type="submit" name="hide" value="value">総いいねをかくす</button>
+	</form>
+
+	<form action="" method="POST" >
+		<button type="submit" name="change" value="value">change</button>
+	</form>
+
+{% else %}
+
+	{{ user.username }}
+	{{ user.profile__intro }}
+	{{ user.profile__image }}
+	
+{% endif %}
+
 {% endblock %}
 
 {% block footer %}

@@ -10,6 +10,13 @@
 {% endblock %}
 
 {% block content %}
+
+<form method="POST" action="">
+	{% csrf_token %}
+	{{ form }}
+	<button type="submit" onclick="">送信</button>
+</form>
+
 {% endblock %}
 
 {% block footer %}

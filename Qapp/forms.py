@@ -11,7 +11,7 @@ class FindFormByWords(forms.Form):
 	words = forms.CharField(label='words', required=False)
 
 	#validation
-	def cleam_words(self):
+	def clean_words(self):
 		words = self.clean_data['words']
 		if words == "None" :
 			raise forms.ValidationError("無効な値が含まれています。")

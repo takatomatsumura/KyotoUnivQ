@@ -84,7 +84,7 @@ class QuestionModel(models.Model):
 	#タグ
 	tag = models.CharField(max_length=50, blank=True, null=True, choices=CHOICE)
 	#状態 - False : 未解答, True : 解答済み
-	condition = models.CharField(max_length=10,default="True", choices=(("True", "True"), ("False", "False")))
+	condition = models.CharField(max_length=10,default="False", choices=(("True", "True"), ("False", "False")))
 
 	def __str__(self):
 		return self.title.__str__()
