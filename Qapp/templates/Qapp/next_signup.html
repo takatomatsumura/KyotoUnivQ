@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-<form method="POST" action="" >
+<form method="POST" action="" enctype="multipart/form-data">
 	{% csrf_token %}
 	{{ form }}
 	<button type="submit" onclick="'">確定</button>

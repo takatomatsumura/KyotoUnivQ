@@ -393,7 +393,7 @@ def tag(request):
 def next_signup(request):
 
     if request.method == 'POST':
-        form = ProfileSignupForm(request.POST)
+        form = ProfileSignupForm(request.POST, request.FILES)
         form.instance.owner = request.user
         form.save()
         return redirect(to = '/')
