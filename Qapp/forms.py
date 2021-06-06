@@ -74,7 +74,7 @@ class UpdateHideForm(forms.ModelForm):
 		model = Profile
 		fields = ['hide']
 
-class ProfileSignupForm(forms.Modelform):
+class ProfileSignupForm(forms.ModelForm):
 	class Meta:
 		model = Profile
 		fields = ['image', 'belong', 'intro']

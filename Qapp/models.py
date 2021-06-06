@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from Accounts.models import CustomUser
+from datetime import datetime
 
 # Create your models here.
 
@@ -76,7 +77,9 @@ class QuestionModel(models.Model):
 	#投稿ユーザー
 	post_user = models.ForeignKey(CustomUser, on_delete = models.CASCADE, related_name='post_user')
 	#日付
-	date = models.DateTimeField(auto_now_add=True)
+	date = models.DateTimeField(default=datetime.now)
+	#解決日時
+	date_settled = models.DateTimeField(auto_now=True)
 	#添付画像
 	image1 = models.ImageField(upload_to = '', blank=True, null=True)
 	image2 = models.ImageField(upload_to = '', blank=True, null=True)
@@ -97,13 +100,13 @@ class AnswerModel(models.Model):
 	#解答内容
 	content = models.CharField(max_length=1500)
 	#ベストアンサー
-	models.CharField(default="False", choices=(("True", "True"), ("False", "False")))
+	condition = models.CharField(max_length=10,default="False", choices=(("True", "True"), ("False", "False")))
 	#添付画像
 	image1 = models.ImageField(upload_to = '', blank=True, null=True)
 	image2 = models.ImageField(upload_to = '', blank=True, null=True)
 	image3 = models.ImageField(upload_to = '', blank=True, null=True)
 	#日付
-	date = models.DateTimeField(auto_now_add=True)
+	date = models.DateTimeField(default=datetime.now)
 	#いいね
 	good = models.IntegerField(default=0)
 
@@ -122,7 +125,7 @@ class MessageModel(models.Model):
 	#メッセージ送信ユーザー
 	sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name = 'sender')
 	#日付
-	date = models.DateTimeField(auto_now_add=True)
+	date = models.DateTimeField(default=datetime.now)
 
 	def __str__(self):
 		return self.answer.__str__()

@@ -17,8 +17,7 @@ from .forms import (
     UpdateUsernameForm,
     UpdateIntroForm,
     UpdateImageForm,
-    UpdateHideForm,
-    ProfileSignupForm
+    UpdateHideForm
     )
 
 
@@ -63,7 +62,9 @@ def index(request):
     else:
         form = FindFormByWords()
 
-    return render(request, "Qapp/index.html", {"form" : form, "message" : message})
+    settled_questions = QuestionModel.objevts.filter(condition = "True").order_by('-date')
+
+    return render(request, "Qapp/index.html", {"form" : form, "message" : message, 'questions' : settled_questions})
 
 
 """
@@ -80,7 +81,7 @@ def find(request, choose, num=1 , searchwords="False", tagged="False"):
     if search == "False" :
         targets = QuestionModel.objects.all().order_by('-date')
     else:
-        targets = QuestionModel.objects.filter(title__icontains = searchwords).order_by('-date')
+        targets = QuestionModel.objects.filter(title__icontains = searchwords).order_by('-date_settled')
 
     if not tagged == "False" :
         targets = targets.filter(tag = tagged)
@@ -389,18 +390,18 @@ def tag(request):
     )
     return render(request, "tag.html", {"choices" : CHOICE})
 
-
 def next_signup(request):
 
-    if request.method == 'POST':
-        form = ProfileSignupForm(request.POST, request.FILES)
-        form.instance.owner = request.user
-        form.save()
-        return redirect(to = '/')
-    else:
-        form = ProfileSignupForm()
+     if request.method == 'POST':
+         form = ProfileSignupForm(request.POST)
+         form.instance.owner = request.user
+         form.save()
+         return redirect(to = '/')
+     else:
+         form = ProfileSignupForm()
 
-    return render(request, "Qapp/next_signup.html", {"form" : form})
+     return render(request, "Qapp/next_signup.html", {"form" : form})
+
 
 
 
