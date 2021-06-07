@@ -21,6 +21,31 @@ from .forms import (
     UpdateHideForm
     )
 
+CHOICE = (
+    ('総合人間学部', '総合人間学部'),
+    ('文学部', '文学部'),
+    ('教育学部', '教育学部'),
+    ('法学部', '法学部'),
+    ('経済学部', '経済学部'),
+    ('理学部', '理学部'),
+    ('医学部医学科', '医学部医学科'),
+    ('医学部人間健康学科', '医学部人間健康学科'),
+    ('薬学部', '薬学部'),
+    ('工学部地球工学科', '工学部地球工学科'),
+    ('工学部建築学科', '工学部建築学科'),
+    ('工学部物理工学科', '工学部物理工学科'),
+    ('工学部電気電子工学科', '工学部電気電子工学科'),
+    ('工学部情報学科', '工学部情報学科'),
+    ('工学部工業化学科', '工学部工業化学科'),
+    ('農学部資源生物科学科', '農学部資源生物科学科'),
+    ('農学部応用生命科学科', '農学部応用生命科学科'),
+    ('農学部地域環境工学科', '農学部地域環境工学科'),
+    ('農学部食料・環境経済学科', '農学部食料・環境経済学科'),
+    ('農学部森林科学科', '農学部森林科学科'),
+    ('農学部食品生物科学科', '農学部食品生物科学科'),
+    ('学校生活', '学校生活'),
+    ('全学共通科目', '全学共通科目'),
+    )
 
 def paginate_queryset(request, queryset, count):
     """
@@ -77,7 +102,7 @@ def index(request):
 -------------------------------------------------------
 """
 
-def find(request, choose, num=1 , searchwords="False", tagged="False"):
+def find(request, choose, searchwords="False", tagged="notagged"):
     
     message = "検索ワードを入力 : "
 
@@ -86,7 +111,7 @@ def find(request, choose, num=1 , searchwords="False", tagged="False"):
     else:
         targets = QuestionModel.objects.filter(title__icontains = searchwords).order_by('-date_settled')
 
-    if not tagged == "False" :
+    if not tagged == "notagged" :
         targets = targets.filter(tag = tagged)
 
     if choose == "pending" :
@@ -101,7 +126,36 @@ def find(request, choose, num=1 , searchwords="False", tagged="False"):
         if form.is_valid:
             search_words = request.POST['words']
             redirect_url = reverse('Qapp:find')
-            parameters = urlencode(dict(choose = "all", searchwords = search_words))
+            parameters = urlencode(dict(choose = "all", searchwords = search_words, tagged = tagged))
+            url = f'{redirect_url}?{parameters}'
+            return redirect(url)
+        else:
+            message = "検索エラー : 検索に失敗しました。"
+
+    else:
+        form = FindFormByWords()
+
+    page_obj = paginate_queryset(request, targets, 15)
+    return render(request, "Qapp/find.html", {"page_obj" : page_obj, "form" : form, "tagged" : tagged, "message" : message})
+
+def findByTag(request, choose, tagged="notagged"):
+
+    targets = QuestionModel.objects.all().order_by('-date')
+
+    if not tagged == "notagged" :
+        targets = targets.filter(tag = tagged)
+
+    if not tagged in CHOICE:
+        tagged = "notagged"
+
+    if request.method == 'POST':
+        form = FindFormByWords(request.POST)
+        message = "検索ワードを入力 : "
+
+        if form.is_valid:
+            search_words = request.POST['words']
+            redirect_url = reverse('Qapp:find')
+            parameters = urlencode(dict(choose = "all", searchwords = search_words, tagged = tagged))
             url = f'{redirect_url}?{parameters}'
             return redirect(url)
         else:
@@ -366,31 +420,6 @@ def setting(request):
     return render(request, "setting.html", {"user" : request.user})
 
 def tag(request):
-    CHOICE = (
-    ('総合人間学部', '総合人間学部'),
-    ('文学部', '文学部'),
-    ('教育学部', '教育学部'),
-    ('法学部', '法学部'),
-    ('経済学部', '経済学部'),
-    ('理学部', '理学部'),
-    ('医学部医学科', '医学部医学科'),
-    ('医学部人間健康学科', '医学部人間健康学科'),
-    ('薬学部', '薬学部'),
-    ('工学部地球工学科', '工学部地球工学科'),
-    ('工学部建築学科', '工学部建築学科'),
-    ('工学部物理工学科', '工学部物理工学科'),
-    ('工学部電気電子工学科', '工学部電気電子工学科'),
-    ('工学部情報学科', '工学部情報学科'),
-    ('工学部工業化学科', '工学部工業化学科'),
-    ('農学部資源生物科学科', '農学部資源生物科学科'),
-    ('農学部応用生命科学科', '農学部応用生命科学科'),
-    ('農学部地域環境工学科', '農学部地域環境工学科'),
-    ('農学部食料・環境経済学科', '農学部食料・環境経済学科'),
-    ('農学部森林科学科', '農学部森林科学科'),
-    ('農学部食品生物科学科', '農学部食品生物科学科'),
-    ('学校生活', '学校生活'),
-    ('全学共通科目', '全学共通科目'),
-    )
     return render(request, "tag.html", {"choices" : CHOICE})
 
 def next_signup(request):

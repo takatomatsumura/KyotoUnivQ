@@ -3,7 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('search/<choose>/<int:num>/<searchwords>/<tagged>', views.find, name='search'),
+    path('search/<choose>/<searchwords>/<tagged>', views.find, name='search'),
+    path('search/<choose>/<tagged>', views.findByTag, name='searchByTag'),
     path('question/<int:num>', views.question, name='question'),
     path('post', views.post, name='post'),
     path('profile/<int:pk>', views.profile, name='profile'),

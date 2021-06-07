@@ -12,7 +12,7 @@
 {% block content %}
 
 {% for choice in choices %}
-<a href="{% url 'search' 'all' '1' 'False' choice %}">
+<a href="{% url 'search' 'all' choice %}">
 {% endfor %}
 
 {% endblock %}
