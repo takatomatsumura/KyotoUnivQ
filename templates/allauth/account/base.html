@@ -1,10 +1,28 @@
-{% block head_title %}
-{% endblock %}
+{% load static %}
 
-{% block content %}
-{% endblock %}
+<!DOCTYPE html>
 
+<html lang="ja">
 
-{% block extra_body %}
-{% endblock %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'Accounts/css/base.css' %}" />
+    {% block extra_style %}
+    {% endblock %}
+    <title></title>
+</head>
+
+<body>
+
+    {% block header %}
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% block footer %}
+    {% endblock %}
+
+</body>
+
+</html>
 

@@ -1,1 +1,27 @@
-base
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'Qapp/css/base.css' %}" />
+    {% block extra_style %}
+    {% endblock %}
+    <title></title>
+</head>
+
+<body>
+
+    {% block header %}
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% block footer %}
+    {% endblock %}
+
+</body>
+
+</html>

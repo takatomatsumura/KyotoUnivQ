@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from .models import QuestionModel, AnswerModel, MessageModel, Profile
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.paginator import Paginator
 from Accounts.models import CustomUser
 from django.contrib.auth.models import User
@@ -62,7 +63,7 @@ def index(request):
     else:
         form = FindFormByWords()
 
-    settled_questions = QuestionModel.objevts.filter(condition = "True").order_by('-date')
+    settled_questions = QuestionModel.objects.filter(condition = "True").order_by('-date')
 
     return render(request, "Qapp/index.html", {"form" : form, "message" : message, 'questions' : settled_questions})
 
@@ -77,6 +78,8 @@ def index(request):
 """
 
 def find(request, choose, num=1 , searchwords="False", tagged="False"):
+    
+    message = "検索ワードを入力 : "
 
     if search == "False" :
         targets = QuestionModel.objects.all().order_by('-date')
