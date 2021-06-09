@@ -24,14 +24,17 @@
 {{ answer.content }}
 
 <form method="POST" action="" >
+	{% csrf_token %}
 	<button type="submit" name="good" value="{{ answer.id }}">good</button>
 </form>
 
 <form method="POST" action="" >
+	{% csrf_token %}
 	<button type="submit" name="choice" value="{{ answer.id }}">choose</button>
 </form>
 
 <form method="POST" action="" >
+	{% csrf_token %}
 	{{ form }}
 	<button type="submit" name="submit" value="{{ answer.id }}">送信</button>
 </form>
@@ -39,6 +42,7 @@
 {% endfor %}
 
 <form method="POST" action="" >
+	{% csrf_token %}
 	{{ ansform }}
 	<button type="submit" name="answer" value="{{ answer.id }}">answer</button>
 </form>

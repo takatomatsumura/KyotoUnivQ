@@ -37,10 +37,12 @@
 	</form>
 
 	<form action="" method="POST" >
+		{% csrf_token %}
 		<button type="submit" name="hide" value="value">総いいねをかくす</button>
 	</form>
 
 	<form action="" method="POST" >
+		{% csrf_token %}
 		<button type="submit" name="change" value="value">change</button>
 	</form>
 
