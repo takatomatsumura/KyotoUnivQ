@@ -130,11 +130,17 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 LOGIN_REDIRECT_URL = 'Qpp:index'
+
 ACCOUNT_LOGIN_REDIRECT_URL = 'Qapp:index'
+
 ACCOUNT_LOGOUT_ON_GET = True
+
 DEFAULT_FROM_EMAIL = 'KyotoUnivQ@email.com'
+
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
 ACCOUNT_EMAIL_REQUIRED = True
+
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 # LOGGING
@@ -185,10 +191,21 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'Qapp/static/'),
     os.path.join(BASE_DIR, 'Accounts/static/'),
     )
+
 STATIC_URL = '/static/'
+
 AUTH_USER_MODEL = 'Accounts.CustomUser'
+
 MEDIA＿ROOT = os.path.join(BASE_DIR, 'img')
+
 MEDIA_URL = '/img/'
-LOGIN_REDIRECT_URL = 'friends'
+
+LOGIN_REDIRECT_URL = 'index'
+
 LOGOUT_REDIRECT_URL = 'index'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+ACCOUNT_ADAPTER = 'Accounts.adapter.MyAccountAdapter'

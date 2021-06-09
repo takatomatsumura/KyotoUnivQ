@@ -6,6 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.paginator import Paginator
 from Accounts.models import CustomUser
 from django.contrib.auth.models import User
+from django.db.models import Q
 from .forms import (
     FindFormByWords, 
     MessageForm, 
@@ -109,7 +110,7 @@ def find(request, choose, searchwords="False", tagged="notagged"):
     if search == "False" :
         targets = QuestionModel.objects.all().order_by('-date')
     else:
-        targets = QuestionModel.objects.filter(title__icontains = searchwords).order_by('-date_settled')
+        targets = QuestionModel.objects.filter(Q(title__icontains = searchwords)|Q(content__icontains = searchwords)).order_by('-date_settled')
 
     if not tagged == "notagged" :
         targets = targets.filter(tag = tagged)

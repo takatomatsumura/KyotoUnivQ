@@ -2,8 +2,18 @@
 
 django-allauthを利用
 -> 開発入門P.205~を参考に
+リンクの貼り方
+loginページなどへリンクが貼りたい時のやりかた
+
+<a href="{% url 'account_login' %}">ログイン</a>
+<a href="{% url 'account_logout' %}">ログアウト</a>
+<a href="{% url 'account_signup' %}">サインアップ</a>
+<a href="{% url 'account_change_password' %}">パスワード変更</a>
+<a href="{% url 'account_inactive' %}">退会</a>
+みたいにする
 
 「もっとみるボタン」の実装
 -> https://gimmicklog.com/jquery/67/
 
 
+{% if user.is_authenticated %}
