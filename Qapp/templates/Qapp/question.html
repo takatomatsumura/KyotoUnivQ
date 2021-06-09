@@ -20,32 +20,57 @@
 {% for answer in answers %}
 
 {{ answer.ans_user.username }}
-{{ answer.ans_user.profile__image }}
+{{ answer.ans_user.profile__image.url }}
 {{ answer.content }}
 
+{% if user.is_authenticated %}
 <form method="POST" action="" >
 	{% csrf_token %}
 	<button type="submit" name="good" value="{{ answer.id }}">good</button>
 </form>
+{% else %}
+<p>いいねするにはログインしてください。</p>
+{% endif %}
 
+{% if user.is_authenticated %}
+{% if user == question.post_user %}
 <form method="POST" action="" >
 	{% csrf_token %}
 	<button type="submit" name="choice" value="{{ answer.id }}">choose</button>
 </form>
+{% endif %}
+{% endif %}
 
+{% if user.is_authenticated %}
 <form method="POST" action="" >
 	{% csrf_token %}
 	{{ form }}
 	<button type="submit" name="submit" value="{{ answer.id }}">送信</button>
 </form>
+{% endif %}
+
+{% for message in answer.messagemodel__set %}
+
+{{ message.sender.username }}
+{{ message.sender.profile__image.url }}
+{{ message.date }}
+{{ message.content }}
 
 {% endfor %}
 
+{% endfor %}
+
+{% if no_anwered %}
+{% if user.is_authenticated %}
 <form method="POST" action="" >
 	{% csrf_token %}
 	{{ ansform }}
 	<button type="submit" name="answer" value="{{ answer.id }}">answer</button>
 </form>
+{% else %}
+<p>回答するにはログインしてください。</p>
+{% endif %}
+{% endif %}
 
 {% endblock %}
 

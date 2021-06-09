@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from Accounts.models import CustomUser
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 from .forms import (
     FindFormByWords, 
     MessageForm, 
@@ -180,23 +181,19 @@ def question(request, num):
 
     question = QuestionModel.objects.get(pk = num)
     answers = question.answermodel_set.all().prefetch_related('answermodel_set')
-    # Messages for Each Answer => {% for message in {{ answers.MessageModel_set.all() }} %}
+
+    no_answered = True
+
+    if question.condition == "True":
+        no_answered = False
+    else:
+        for answer in answers:
+            if answer.ans_user == request.user:
+                no_answered = False
 
     if request.method == 'POST':
 
         if "answer" in request.POST:
-
-            # Check Answered or not
-            # This check must also be contained by question.html.
-            # When question is answered, the answer form should be hiden.
-
-            answered = False
-
-            for answer in answers:
-                if answer.ans_user == request.user:
-                    answered = True
-
-            # Check end
 
             if not answered:
                 ansform = AnswerForm(request.POST)
@@ -281,6 +278,7 @@ def question(request, num):
         "selform" : selform,
         "ansform" : ansform,
         "findform" : findform,
+        "no_answered" : no_answered,
     }
 
     return render(request, "Qapp/question.html", params)
@@ -312,6 +310,7 @@ def report(request, typed, pk):
 >>>> This function corresponds to *Question-Post Page*
 -------------------------------------------------------
 """
+@login_required
 def post(request):
 
     if request.method == 'POST':
