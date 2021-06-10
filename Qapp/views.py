@@ -18,7 +18,7 @@ from .forms import (
     BestAnswerSelectForm, 
     QuestionForm, 
     GoodForm, 
-    ProfileForm,
+    ProfileSignupForm,
     UpdateUsernameForm,
     UpdateIntroForm,
     UpdateImageForm,
@@ -322,10 +322,14 @@ def post(request):
 """
 def profile(request, pk):
 
-    if not User.objects.filter(pk = pk).exists():
-        return render(request, "404.html")
+    if not CustomUser.objects.filter(pk = pk).exists():
+        return render(request, "Qapp/404.html")
 
-    _user = User.objects.get(pk = pk)
+    _user = CustomUser.objects.get(pk = pk)
+
+    if not Profile.objects.filter(pk = pk).exists():
+        return render(request, "Qapp/no_profile.html")
+
     _user_profile = Profile.objects.get(pk = pk)
 
     #True : the user's questions False : the user's answered questions
@@ -398,7 +402,7 @@ def profile(request, pk):
             "user" : _user,
             }
 
-        return render(request, "profile.html", params)
+        return render(request, "Qapp/profile.html", params)
 
 """
 ----------------setting function----------------------
@@ -407,7 +411,7 @@ def profile(request, pk):
 """
 def setting(request):
     # logout, password_change -> Accounts App
-    return render(request, "setting.html", {"user" : request.user})
+    return render(request, "Qapp/setting.html", {"user" : request.user})
 
 def tag(request):
     return render(request, "Qapp/tag.html", {"choices" : CHOICE})
