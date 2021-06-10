@@ -7,6 +7,8 @@ from django.core.paginator import Paginator
 from Accounts.models import CustomUser
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.urls import reverse
+from urllib.parse import urlencode
 from django.contrib.auth.decorators import login_required
 from .forms import (
     FindFormByWords, 
@@ -24,29 +26,29 @@ from .forms import (
     )
 
 CHOICE = (
-    ('総合人間学部', '総合人間学部'),
-    ('文学部', '文学部'),
-    ('教育学部', '教育学部'),
-    ('法学部', '法学部'),
-    ('経済学部', '経済学部'),
-    ('理学部', '理学部'),
-    ('医学部医学科', '医学部医学科'),
-    ('医学部人間健康学科', '医学部人間健康学科'),
-    ('薬学部', '薬学部'),
-    ('工学部地球工学科', '工学部地球工学科'),
-    ('工学部建築学科', '工学部建築学科'),
-    ('工学部物理工学科', '工学部物理工学科'),
-    ('工学部電気電子工学科', '工学部電気電子工学科'),
-    ('工学部情報学科', '工学部情報学科'),
-    ('工学部工業化学科', '工学部工業化学科'),
-    ('農学部資源生物科学科', '農学部資源生物科学科'),
-    ('農学部応用生命科学科', '農学部応用生命科学科'),
-    ('農学部地域環境工学科', '農学部地域環境工学科'),
-    ('農学部食料・環境経済学科', '農学部食料・環境経済学科'),
-    ('農学部森林科学科', '農学部森林科学科'),
-    ('農学部食品生物科学科', '農学部食品生物科学科'),
-    ('学校生活', '学校生活'),
-    ('全学共通科目', '全学共通科目'),
+    '総合人間学部',
+    '文学部',
+    '教育学部',
+    '法学部',
+    '経済学部',
+    '理学部',
+    '医学部医学科',
+    '医学部人間健康学科',
+    '薬学部',
+    '工学部地球工学科',
+    '工学部建築学科',
+    '工学部物理工学科',
+    '工学部電気電子工学科',
+    '工学部情報学科',
+    '工学部工業化学科',
+    '農学部資源生物科学科',
+    '農学部応用生命科学科',
+    '農学部地域環境工学科',
+    '農学部食料・環境経済学科',
+    '農学部森林科学科',
+    '農学部食品生物科学科',
+    '学校生活',
+    '全学共通科目',
     )
 
 def paginate_queryset(request, queryset, count):
@@ -80,10 +82,7 @@ def index(request):
 
         if form.is_valid:
             search_words = request.POST['words']
-            redirect_url = reverse('Qapp:find')
-            parameters = urlencode(dict(choose = "all", searchwords = search_words))
-            url = f'{redirect_url}?{parameters}'
-            return redirect(url)
+            return redirect('Qapp:search', choose = "all", searchwords = search_words, tagged="notagged")
         else:
             message = "検索エラー : 検索に失敗しました。"
 
@@ -104,11 +103,11 @@ def index(request):
 -------------------------------------------------------
 """
 
-def find(request, choose, searchwords="False", tagged="notagged"):
+def find(request, choose, searchwords, tagged):
     
     message = "検索ワードを入力 : "
 
-    if search == "False" :
+    if searchwords == "False" :
         targets = QuestionModel.objects.all().order_by('-date')
     else:
         targets = QuestionModel.objects.filter(Q(title__icontains = searchwords)|Q(content__icontains = searchwords)).order_by('-date_settled')
@@ -127,10 +126,7 @@ def find(request, choose, searchwords="False", tagged="notagged"):
 
         if form.is_valid:
             search_words = request.POST['words']
-            redirect_url = reverse('Qapp:find')
-            parameters = urlencode(dict(choose = "all", searchwords = search_words, tagged = tagged))
-            url = f'{redirect_url}?{parameters}'
-            return redirect(url)
+            return redirect('Qapp:search', choose = "all", searchwords = search_words, tagged="notagged")
         else:
             message = "検索エラー : 検索に失敗しました。"
 
@@ -156,10 +152,7 @@ def findByTag(request, choose, tagged="notagged"):
 
         if form.is_valid:
             search_words = request.POST['words']
-            redirect_url = reverse('Qapp:find')
-            parameters = urlencode(dict(choose = "all", searchwords = search_words, tagged = tagged))
-            url = f'{redirect_url}?{parameters}'
-            return redirect(url)
+            return redirect('Qapp:search', choose = "all", searchwords = search_words, tagged="notagged")
         else:
             message = "検索エラー : 検索に失敗しました。"
 
@@ -180,7 +173,7 @@ def findByTag(request, choose, tagged="notagged"):
 def question(request, num):
 
     question = QuestionModel.objects.get(pk = num)
-    answers = question.answermodel_set.all().prefetch_related('answermodel_set')
+    answers = AnswerModel.objects.filter(question = question)
 
     no_answered = True
 
@@ -207,10 +200,7 @@ def question(request, num):
 
             if findform.is_valid:
                 search_words = request.POST['words']
-                redirect_url = reverse('Qapp:find')
-                parameters = urlencode(dict(choose = "all", searchwords = search_words))
-                url = f'{redirect_url}?{parameters}'
-                return redirect(url)
+                return redirect('Qapp:search', choose = "all", searchwords = search_words, tagged="notagged")
             else:
                 message = "検索エラー : 検索に失敗しました。"
 
@@ -222,8 +212,8 @@ def question(request, num):
             # Check whether already gooded or not
             if not ans.ans_user == request.user and not GoodModel.objects.filter(answer = ans, gooder = request.user).exists():
                 goodform = GoodForm()
-                goodform.answer = ans
-                goodform.gooder = request.user
+                goodform.instance.answer = ans
+                goodform.instance.gooder = request.user
                 goodform.save()
                 ans.good += 1
                 ans.save()
@@ -316,7 +306,7 @@ def post(request):
     if request.method == 'POST':
 
         form = QuestionForm(request.POST)
-        form.post_user = request.user
+        form.instance.post_user = request.user
         form.save()
 
     else:
@@ -420,7 +410,7 @@ def setting(request):
     return render(request, "setting.html", {"user" : request.user})
 
 def tag(request):
-    return render(request, "tag.html", {"choices" : CHOICE})
+    return render(request, "Qapp/tag.html", {"choices" : CHOICE})
 
 def next_signup(request):
 
