@@ -10,6 +10,12 @@
 {% endblock %}
 
 {% block content %}
+
+<a href="{% url 'account_change_password' %}">パスワード変更</a>
+<a href="{% url 'account_logout' %}">ログアウト</a>
+{{ user.username }}
+{{ user.email }}
+
 {% endblock %}
 
 {% block footer %}
