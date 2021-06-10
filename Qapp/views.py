@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .models import QuestionModel, AnswerModel, MessageModel, Profile
+from .models import QuestionModel, AnswerModel, MessageModel, Profile, GoodModel
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.paginator import Paginator
 from Accounts.models import CustomUser
@@ -184,6 +184,11 @@ def question(request, num):
             if answer.ans_user == request.user:
                 no_answered = False
 
+    ansform = AnswerForm()
+    selform = BestAnswerSelectForm()
+    findform = FindFormByWords()
+    form = MessageForm()
+
     if request.method == 'POST':
 
         if "answer" in request.POST:
@@ -193,8 +198,10 @@ def question(request, num):
                 ansform.instance.ans_user = request.user
                 ansform.instance.question = question
                 ansform.save()
+                ansform = AnswerForm()
 
-        elif "search" in request.POST:
+        if "search" in request.POST:
+
             findform = FindFormByWords(request.POST)
             message = "検索ワードを入力 : "
 
@@ -204,32 +211,35 @@ def question(request, num):
             else:
                 message = "検索エラー : 検索に失敗しました。"
 
+            findform = FindFormByWords()
+
         #<form><button name = "good" value = "{{ answer.id }}">
-        elif "good" in request.POST:
+        if "good" in request.POST:
             ans_num = int(request.POST['good'])
             ans = AnswerModel.objects.get(pk = ans_num)
 
             # Check whether already gooded or not
-            if not ans.ans_user == request.user and not GoodModel.objects.filter(answer = ans, gooder = request.user).exists():
-                goodform = GoodForm()
-                goodform.instance.answer = ans
-                goodform.instance.gooder = request.user
-                goodform.save()
-                ans.good += 1
-                ans.save()
-                ans.ans_user.good_points += 1
-                ans.ans_user.save()
+            if not ans.ans_user == request.user:
+                if not GoodModel.objects.filter(answer = ans, gooder = request.user).exists():
+                    goodform = GoodForm()
+                    goodform.instance.answer = ans
+                    goodform.instance.gooder = request.user
+                    goodform.save()
+                    ans.good += 1
+                    ans.save()
+                    ans.ans_user.good_points += 1
+                    ans.ans_user.save()
 
-            else:
-                gooded = GoodModel.objects.get(answer = ans, gooder = request.user)
-                gooded.delete()
-                ans.good -= 1
-                ans.save()
-                ans.ans_user.good_points -= 1
-                ans.ans_user.save()
+                else:
+                    gooded = GoodModel.objects.get(answer = ans, gooder = request.user)
+                    gooded.delete()
+                    ans.good -= 1
+                    ans.save()
+                    ans.ans_user.good_points -= 1
+                    ans.ans_user.save()
 
         #<button name = "submit" value = "{{ answer.id  }}"> -> Button for submitting MessageForm
-        elif "submit" in request.POST:
+        if "submit" in request.POST:
             form = MessageForm(request.POST)
             ans_num = int(request.POST['submit'])
             ans = AnswerModel.objects.get(pk = ans_num)
@@ -242,7 +252,7 @@ def question(request, num):
 
         #<button name = "choice" value = "{{ answer.id }}" -> Button for Selecting The Best Answer
         #Please check in the template file wheteher request.user == the person who submit this question
-        elif "choice" in request.POST:
+        if "choice" in request.POST:
             selform = BestAnswerSelectForm(request.POST)
             sel_num = int(request.POST['choice'])
             sel = AnswerModel.objects.get(pk = sel_num)
@@ -251,14 +261,7 @@ def question(request, num):
             sel_q = QuestionModel.objects.get(answermodel_set__id = sel_num)
             sel_q.condition = "True"
             sel_q.save()
-
-
-    else:
-
-        ansform = AnswerForm()
-        selform = BestAnswerSelectForm()
-        findform = FindFormByWords()
-        form = MessageForm()
+            selform = BestAnswerSelectForm()
 
     params = {
         "user" : request.user,
@@ -346,6 +349,11 @@ def profile(request, pk):
     #True : the user's questions False : the user's answered questions
     now_selected = True
 
+    imageform = UpdateImageForm()
+    nameform = UpdateUsernameForm()
+    introform = UpdateIntroForm()
+    findform = FindFormByWords()
+
     if request.user == profile :
 
         question_all = QuestionModel.objects.filter(post_user = request.user)
@@ -359,12 +367,14 @@ def profile(request, pk):
                 user_profile = Profile.objects.get(owner = request.user)
                 user_profile.image = request.FILES['image']
                 user_profile.save()
+                imageform = UpdateImageForm()
 
             #<button name = "username" value = "value" -> Button for changing username
             if "username" in request.POST:
                 nameform = UpdateUsernameForm(request.POST)
                 user_obj = User.objects.get(username = request.user.username)
                 user_obj.username = nameform.cleaned_data["username"]
+                nameform = UpdateUsernameForm()
 
             #<button name = "intro" value = "value" -> Button for changing introduction
             if "intro" in request.POST:
@@ -372,6 +382,7 @@ def profile(request, pk):
                 user_profile = Profile.objects.get(owner = request.user)
                 user_profile.intro = introform.cleaned_data["intro"]
                 user_profile.save()
+                introform = UpdateIntroForm()
 
             #<button name = "hide" value = "value" -> Button for hiding all Goods the user got 
             if "hide" in request.POST:
@@ -396,13 +407,6 @@ def profile(request, pk):
                     return redirect('Qapp:search', choose = "all", searchwords = search_words, tagged="notagged")
                 else:
                     message = "検索エラー : 検索に失敗しました。"
-
-        else:
-
-            imageform = UpdateImageForm()
-            nameform = UpdateUsernameForm()
-            introform = UpdateIntroForm()
-            findform = FindFormByWords()
 
         params = {
             "imageform" : imageform,
@@ -470,6 +474,9 @@ def next_signup(request):
     if Profile.objects.filter(owner = request.user).exists():
         return render(request, "Qapp/already_profile_set.html", {'user' : request.user})
 
+    form = ProfileSignupForm()
+    findform = FindFormByWords()
+
     if request.method == 'POST':
         if "search" in request.POST:
             findform = FindFormByWords(request.POST)
@@ -485,9 +492,6 @@ def next_signup(request):
             form.instance.owner = request.user
             form.save()
             return redirect(to = 'Qapp:index')
-    else:
-         form = ProfileSignupForm()
-         findform = FindFormByWords()
 
     return render(request, "Qapp/next_signup.html", {"form" : findform, "pform" : form, "user" : request.user})
 
