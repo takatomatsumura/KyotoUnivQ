@@ -6,15 +6,12 @@
 <link rel="stylesheet" type="text/css" href="{% static 'Qapp/css/index.css' %}">
 {% endblock %}
 
-{% block header %}
-{% endblock %}
 
 {% block content %}
-<form method="POST" action="" >
-	{% csrf_token %}
-	{{ message }} : {{ form }}
-	<button type="submit" onclick="'">検索</button>
-</form>
+<div class="list-wrapper">
+<li class="button btn btn-primary">質問してみる</li>
+<li class="index-setting">設定</li>
+</div>
 {% endblock %}
 
 {{ questions }}

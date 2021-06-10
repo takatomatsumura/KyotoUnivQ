@@ -5,6 +5,11 @@
 <html lang="ja">
 
 <head>
+    <meta charset="utf-8">
+    <title>ホーム画面</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        crossorigin="anonymous">
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'Qapp/css/base.css' %}" />
     {% block extra_style %}
     {% endblock %}
@@ -12,16 +17,28 @@
 </head>
 
 <body>
-
+    <header>
     {% block header %}
+    <form method="POST">
+        {% csrf_token %}
+    <div class="header-wrapper">
+        <li class="header-list header-logo"><a href="">ロゴ</a></li>
+        <li class="header-list header-search">ワード検索: {{form}}<input type="submit" value="検索" name="search" class="btn btn-primary"></li>
+        <li class="header-list header-category"><a href="">カテゴリー</a></li>
+        <li class="header-list header-profile"><a href="">プルフィール</a></li>
+        <li class="header-list header-question"><a href="">質問する</a></li>
+    </div>
+    </form>
     {% endblock %}
-
+    </header>
+    <main class="container">
     {% block content %}
     {% endblock %}
-
+    </main>
+    <footer>
     {% block footer %}
     {% endblock %}
-
+</footer>
 </body>
 
 </html>
