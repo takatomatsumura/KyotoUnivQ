@@ -78,4 +78,7 @@ class ProfileSignupForm(forms.ModelForm):
 	class Meta:
 		model = Profile
 		fields = ['image', 'belong', 'intro']
+		widgets = {
+            'intro': forms.Textarea(attrs={'rows':4, 'cols':100}),
+        }
 

@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+app_name = "Qapp"
+
 urlpatterns = [
     path('', views.index, name='index'),
     path('search/<choose>/<searchwords>/<tagged>', views.find, name='search'),

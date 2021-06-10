@@ -13,7 +13,7 @@
 
 <form method="POST" action="" >
 	{% csrf_token %}
-	{{ message }} : {{ findform }}
+	{{ message }} : {{ form }}
 	<button type="submit" name="search" value="value" onclick="'">検索</button>
 </form>
 
@@ -63,7 +63,7 @@
 	{% if user.is_authenticated %}
 		<form method="POST" action="" >
 			{% csrf_token %}
-			{{ form }}
+			{{ messageform }}
 		<button type="submit" name="submit" value="{{ answer.id }}">送信</button>
 		</form>
 	{% endif %}

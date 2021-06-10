@@ -10,9 +10,13 @@
 {% endblock %}
 
 {% block content %}
+<p>{{ user.username }}</p>
 <form method="POST" action="" enctype="multipart/form-data">
 	{% csrf_token %}
-	{{ form }}
+	{% for field in pform %}
+		{{ field.label_tag }}<br>
+		{{ field }}<br>
+	{% endfor %}
 	<button type="submit" onclick="">確定</button>
 </form>
 {% endblock %}

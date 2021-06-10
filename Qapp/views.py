@@ -188,7 +188,7 @@ def question(request, num):
 
         if "answer" in request.POST:
 
-            if not answered:
+            if no_answered:
                 ansform = AnswerForm(request.POST)
                 ansform.instance.ans_user = request.user
                 ansform.instance.question = question
@@ -264,10 +264,10 @@ def question(request, num):
         "user" : request.user,
         "question" : question,
         "answers" : answers,
-        "form" : form,
+        "form" : findform,
         "selform" : selform,
         "ansform" : ansform,
-        "findform" : findform,
+        "messageform" : form,
         "no_answered" : no_answered,
     }
 
@@ -305,15 +305,26 @@ def post(request):
 
     if request.method == 'POST':
 
-        form = QuestionForm(request.POST)
-        form.instance.post_user = request.user
-        form.save()
+        if "search" in request.POST:
+            findform = FindFormByWords(request.POST)
+            message = "検索ワードを入力 : "
+
+            if findform.is_valid:
+                search_words = request.POST['words']
+                return redirect('Qapp:search', choose = "all", searchwords = search_words, tagged="notagged")
+            else:
+                message = "検索エラー : 検索に失敗しました。"
+        else:
+            form = QuestionForm(request.POST)
+            form.instance.post_user = request.user
+            form.save()
 
     else:
 
+        findeform = FindFormByWords()
         form = QuestionForm()
 
-    return render(request, "Qapp/post.html", {'form' : form})
+    return render(request, "Qapp/post.html", {'qform' : form, 'form' : findform})
 
 """
 ----------------profile function----------------------
@@ -346,7 +357,7 @@ def profile(request, pk):
             if "image" in request.POST:
                 imageform = UpdateImageForm(request.POST, request.FILES)
                 user_profile = Profile.objects.get(owner = request.user)
-                user_profile.image = iamgeform.cleaned_data["image"]
+                user_profile.image = request.FILES['image']
                 user_profile.save()
 
             #<button name = "username" value = "value" -> Button for changing username
@@ -376,16 +387,28 @@ def profile(request, pk):
                 else:
                     now_selected = True
 
+            if "search" in request.POST:
+                findform = FindFormByWords(request.POST)
+                message = "検索ワードを入力 : "
+
+                if findform.is_valid:
+                    search_words = request.POST['words']
+                    return redirect('Qapp:search', choose = "all", searchwords = search_words, tagged="notagged")
+                else:
+                    message = "検索エラー : 検索に失敗しました。"
+
         else:
 
             imageform = UpdateImageForm()
             nameform = UpdateUsernameForm()
             introform = UpdateIntroForm()
+            findform = FindFormByWords()
 
         params = {
             "imageform" : imageform,
             "nameform" : nameform,
             "introform" : introform,
+            "form" : findform,
             "user_profile" : _user_profile,
             "user" : _user,
             "questions" : question_all,
@@ -410,23 +433,63 @@ def profile(request, pk):
 -------------------------------------------------------
 """
 def setting(request):
-    # logout, password_change -> Accounts App
-    return render(request, "Qapp/setting.html", {"user" : request.user})
+
+    if request.method == 'POST':
+        if "search" in request.POST:
+            findform = FindFormByWords(request.POST)
+            message = "検索ワードを入力 : "
+
+            if findform.is_valid:
+                search_words = request.POST['words']
+                return redirect('Qapp:search', choose = "all", searchwords = search_words, tagged="notagged")
+            else:
+                message = "検索エラー : 検索に失敗しました。"
+    else:
+        findform = FindFormByWords()
+
+    return render(request, "Qapp/setting.html", {"user" : request.user, "form" : findform})
 
 def tag(request):
-    return render(request, "Qapp/tag.html", {"choices" : CHOICE})
+    if request.method == "POST":
+        if "search" in request.POST:
+            findform = FindFormByWords(request.POST)
+            message = "検索ワードを入力 : "
 
+            if findform.is_valid:
+                search_words = request.POST['words']
+                return redirect('Qapp:search', choose = "all", searchwords = search_words, tagged="notagged")
+            else:
+                message = "検索エラー : 検索に失敗しました。"
+    else:
+        findform = FindFormByWords()
+    return render(request, "Qapp/tag.html", {"choices" : CHOICE, "form" : findform})
+
+@login_required
 def next_signup(request):
 
-     if request.method == 'POST':
-         form = ProfileSignupForm(request.POST)
-         form.instance.owner = request.user
-         form.save()
-         return redirect(to = '/')
-     else:
-         form = ProfileSignupForm()
+    if Profile.objects.filter(owner = request.user).exists():
+        return render(request, "Qapp/already_profile_set.html", {'user' : request.user})
 
-     return render(request, "Qapp/next_signup.html", {"form" : form})
+    if request.method == 'POST':
+        if "search" in request.POST:
+            findform = FindFormByWords(request.POST)
+            message = "検索ワードを入力 : "
+
+            if findform.is_valid:
+                search_words = request.POST['words']
+                return redirect('Qapp:search', choose = "all", searchwords = search_words, tagged="notagged")
+            else:
+                message = "検索エラー : 検索に失敗しました。"
+        else:
+            form = ProfileSignupForm(request.POST)
+            form.instance.owner = request.user
+            form.save()
+            return redirect(to = 'Qapp:index')
+    else:
+         form = ProfileSignupForm()
+         findform = FindFormByWords()
+
+    return render(request, "Qapp/next_signup.html", {"form" : findform, "pform" : form, "user" : request.user})
 
 
 
